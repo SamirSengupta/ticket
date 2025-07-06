@@ -85,12 +85,7 @@
             
             // 30 minutes in milliseconds
             const thirtyMinutes = 30 * 60 * 1000;
-            const remainingTime = thirtyMinutes - elapsedTime;
-            
-            if (remainingTime <= 0) {
-                countdown.textContent = "00:00:00:00";
-                return;
-            }
+            const remainingTime = thirtyMinutes - (elapsedTime % thirtyMinutes);
             
             const totalSeconds = Math.floor(remainingTime / 1000);
             const days = Math.floor(totalSeconds / (24 * 3600));
@@ -104,6 +99,17 @@
         function updateDateTime() {
             const datetime = document.getElementById("datetime");
             const currentDate = new Date();
+            
+            // Check if date has changed and update stored date
+            const storedDate = sessionStorage.getItem('currentDate');
+            const currentDateString = currentDate.toDateString();
+            
+            if (storedDate !== currentDateString) {
+                sessionStorage.setItem('currentDate', currentDateString);
+                // Force update of the display
+                updateMonthAndYear();
+            }
+            
             const timeOptions = {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -129,6 +135,12 @@
         updateMonthAndYear();
         updateCountdown();
         updateDateTime();
+        
+        // Initialize current date in sessionStorage
+        if (!sessionStorage.getItem('currentDate')) {
+            sessionStorage.setItem('currentDate', new Date().toDateString());
+        }
+        
         setInterval(updateCountdown, 1000); // Update every 1 second for days:hours:minutes:seconds
         setInterval(updateDateTime, 1000);
     </script>
