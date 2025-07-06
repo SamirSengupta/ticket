@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<head>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="user-scalable=0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        const linkElement = document.createElement("link");
+        linkElement.rel = "stylesheet";
+        linkElement.type = "text/css";
+        const timestamp = new Date().getTime();
+        const updatedCssUrl = `color.css?t=${timestamp}`;
+        linkElement.href = updatedCssUrl;
+        document.head.appendChild(linkElement);
+    </script>
+    <script>
+        function openPopup() {
+            document.getElementById("popupModal").style.display = "flex";
+        }
+    
+        function closePopup() {
+            document.getElementById("popupModal").style.display = "none";
+        }
+    </script>
+</head>
+<body style="margin: 0;">
+    <div class="container">
+        <div class="square">
+            <div class="square-text" id="pass_month_year">
+                One Way<br>1 Adult
+            </div>
+        </div>
+        <div class="qr-square">
+            <a href="#" onclick="openPopup(); return false;">
+                <img class="qr-code" src="your-qr-code-image.png" alt="QR Code">
+            </a>
+            <div class="tap-to-enlarge">Tap to enlarge</div>
+        </div>
+    </div>
+    <div class="bip">INTRASTATE</div>
+    <div class="rectangle">
+        <div class="rectangle-text1" onclick="updateZoneText()">1</div>
+        <div class="rectangle-text2">ZONE RIDE</div>
+        <div class="rectangle-text3">**Not Valid for HBLR**</div>
+    </div>
+    <div class="validator-instructions">
+        <a href="#" class="validator-link">View Validator Instructions</a>
+    </div>
+    <div class="bottom-container">
+        <div class="datetime" id="datetime"></div>
+        <div class="color-strip">
+            <div class="color-block red"></div>
+            <div class="color-block green"></div>
+            <div class="color-block blue"></div>
+        </div>
+        <div class="expires-text">Expires in <span id="countdown"></span></div>
+        <img class="bottom-image" src="bottom.png" alt="Bottom Image">
+        
+        <div id="popupModal">
+                <img onclick="closePopup()" src="your-qr-code-image.png" alt="QR Code">
+                <a class="back-font">Tap to go back</a>
+        </div>
+    </div>
+    <script>
+        function updateMonthAndYear() {
+            document.getElementById("pass_month_year").innerHTML = "One Way<br>1 Adult";
+        }
+
+        function updateCountdown() {
+            const countdown = document.getElementById("countdown");
+            
+            // Get the current time when the page loads (stored in sessionStorage)
+            if (!sessionStorage.getItem('startTime')) {
+                sessionStorage.setItem('startTime', new Date().getTime());
+            }
+            
+            const startTime = parseInt(sessionStorage.getItem('startTime'));
+            const currentTime = new Date().getTime();
+            const elapsedTime = currentTime - startTime;
+            
+            // 30 minutes in milliseconds
+            const thirtyMinutes = 30 * 60 * 1000;
+            const remainingTime = thirtyMinutes - elapsedTime;
+            
+            if (remainingTime <= 0) {
+                countdown.textContent = "00:00:00:00";
+                return;
+            }
+            
+            const totalSeconds = Math.floor(remainingTime / 1000);
+            const days = Math.floor(totalSeconds / (24 * 3600));
+            const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            countdown.textContent = `${days.toString().padStart(2, "0")}:${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        }
+
+        function updateDateTime() {
+            const datetime = document.getElementById("datetime");
+            const currentDate = new Date();
+            const timeOptions = {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true
+            };
+            const dateOptions = {
+                weekday: "long",
+                month: "short",
+                day: "2-digit",
+                year: "numeric"
+            };
+            const timeString = currentDate.toLocaleTimeString("en-US", timeOptions);
+            const dateString = currentDate.toLocaleDateString("en-US", dateOptions);
+            datetime.innerHTML = `${timeString}<br>${dateString}`;
+        }
+        function updateZoneText() {
+            const zoneElement = document.querySelector(".rectangle-text1");
+            let currentZone = parseInt(zoneElement.textContent, 10);
+            currentZone = currentZone === 8 ? 1  : currentZone + 1;
+            zoneElement.textContent = currentZone;
+        }
+        updateMonthAndYear();
+        updateCountdown();
+        updateDateTime();
+        setInterval(updateCountdown, 1000); // Update every 1 second for days:hours:minutes:seconds
+        setInterval(updateDateTime, 1000);
+    </script>
+
+</body>
+
+<!-- Mirrored from dummytummy123.github.io/ticketsystem/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 09 Jan 2025 16:05:01 GMT -->
+</html>
+
