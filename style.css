@@ -206,10 +206,10 @@ body {
     opacity: 1;
 }
 }
-
+/* width of the bar 40 to 45 */
 .color-block {
     width: 34%;
-    height: 40px;
+    height: 45px;
 }
 
 .red {
