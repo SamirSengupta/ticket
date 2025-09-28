@@ -1,0 +1,76 @@
+name: Sync color.css from upstream
+
+on:
+  schedule:
+    # Runs at 7:00 AM, 10:00 AM, and 11:50 AM America/New_York (convert to UTC)
+    - cron: "0 11 * * *"   # 7 AM ET
+    - cron: "0 14 * * *"   # 10 AM ET
+    - cron: "50 15 * * *"  # 11:50 AM ET
+  workflow_dispatch: {}     # manual run button
+
+permissions:
+  contents: write           # needed to push commits
+  pull-requests: write      # needed if creating PRs
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Fetch upstream color.css
+        run: |
+          mkdir -p tmp
+          curl -fsSL \
+            https://raw.githubusercontent.com/Amar-louis/ticket-master/refs/heads/main/color.css \
+            -o tmp/color.css
+
+      - name: Detect changes
+        id: diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET="color.css"
+          UPSTREAM="tmp/color.css"
+
+          if [ ! -f "$UPSTREAM" ]; then
+            echo "Failed to fetch upstream color.css"; exit 1
+          fi
+
+          if [ ! -f "$TARGET" ]; then
+            echo "No local color.css; creating it."
+            cp "$UPSTREAM" "$TARGET"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif ! cmp -s "$UPSTREAM" "$TARGET"; then
+            echo "Differences found; updating local file."
+            cp "$UPSTREAM" "$TARGET"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Option A: push directly (works if default branch isn't protected)
+      - name: Commit & push
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add color.css
+          git commit -m "chore: sync color.css from Amar-louis/ticket-master@main"
+          git push
+
+      # Option B: open a PR (useful if branch protection blocks direct pushes)
+      - name: Create pull request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: sync color.css from Amar-louis/ticket-master@main"
+          branch: chore/sync-color-css
+          title: "Sync color.css from upstream"
+          body: |
+            This PR syncs `color.css` from `Amar-louis/ticket-master@main`.
+            Auto-created by GitHub Actions.
+          add-paths: |
+            color.css
