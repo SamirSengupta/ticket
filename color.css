@@ -1,6 +1,13 @@
 :root {
+<<<<<<< Updated upstream
         --first: #a3a3a3;
         --stripone: #ed94eb;
         --striptwo: #d16ec6;
         --stripthree: #88de7d;
+=======
+        --first: #f7ced5;
+        --stripone: #625189;
+        --striptwo: #647e64;
+        --stripthree: #c142d5;
+>>>>>>> Stashed changes
     }
