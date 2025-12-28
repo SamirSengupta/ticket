@@ -18,6 +18,14 @@
         linkElement.href = updatedCssUrl;
         document.head.appendChild(linkElement);
     </script>
+    <style>
+    .bip {
+        color: red;
+        font-weight: bold; /* optional */
+        font-size: 18px;   /* optional */
+    }
+</style>
+
     <script>
         function openPopup() {
             document.getElementById("popupModal").style.display = "flex";
@@ -42,9 +50,9 @@
             <div class="tap-to-enlarge">Tap to enlarge</div>
         </div>
     </div>
-    <div class="bip">INTRASTATE</div>
+    <div class="bip" style="color: red;">INTERSTATE</div>
     <div class="rectangle">
-        <div class="rectangle-text1" onclick="updateZoneText()">1</div>
+        <div class="rectangle-text1" onclick="updateZoneText()">2</div>
         <div class="rectangle-text2">ZONE RIDE</div>
         <div class="rectangle-text3">**Not Valid for HBLR**</div>
     </div>
@@ -84,7 +92,7 @@
             const elapsedTime = currentTime - startTime;
             
             // 30 minutes in milliseconds
-            const thirtyMinutes = 30 * 60 * 1000;
+            const thirtyMinutes = 60 * 60 * 1000;
             const remainingTime = thirtyMinutes - (elapsedTime % thirtyMinutes);
             
             const totalSeconds = Math.floor(remainingTime / 1000);
